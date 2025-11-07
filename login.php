@@ -1,16 +1,22 @@
 <?php
-// login.php (final)
-// Pastikan file db_connect.php membuat $conn sebagai mysqli connection
-include "db_connect.php";
+// login.php (updated)
+
+// 1. Sertakan koneksi DB dan handler session
+include "db_connect_cloud.php"; // <-- PENTING: Gunakan file koneksi cloud
+include "session_handler.php";  // <-- PENTING: Sertakan handler
+
+// 2. Inisialisasi handler dengan koneksi database
+$handler = new MySQLSessionHandler($conn);
+
+// 3. Set save handler kustom
+session_set_save_handler($handler, true);
 
 // Session hardening (set sebelum session_start)
 ini_set('session.cookie_httponly', 1);
 ini_set('session.use_strict_mode', 1);
-// jika menggunakan HTTPS di production, set session.cookie_secure = 1
-// ini cuma efektif jika situs dijalankan lewat https
-// ini_set('session.cookie_secure', 1);
+// ini_set('session.cookie_secure', 1); // Aktifkan ini jika sudah full HTTPS
 
-session_save_path("/tmp"); // <-- Tambahkan baris ini
+// 4. Mulai session
 session_start();
 
 // Konfigurasi reCAPTCHA - GANTI dengan keys milikmu

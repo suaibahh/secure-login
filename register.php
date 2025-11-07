@@ -1,13 +1,21 @@
 <?php
+// 1. Sertakan koneksi DB dan handler session
+include "db_connect_cloud.php"; // <-- PENTING: Gunakan file koneksi cloud
+include "session_handler.php";  // <-- PENTING: Sertakan handler
+
+// 2. Inisialisasi handler dengan koneksi database
+$handler = new MySQLSessionHandler($conn);
+
+// 3. Set save handler kustom
+session_set_save_handler($handler, true);
+
 // Session hardening (set sebelum session_start)
 ini_set('session.cookie_httponly', 1);
 ini_set('session.use_strict_mode', 1);
 
-session_save_path("/tmp"); // <-- Tambahkan baris ini
+// 4. Mulai session
 session_start();
-include "db_connect.php";
 
-// Konfigurasi reCAPTCHA
 // Konfigurasi reCAPTCHA
 $RECAPTCHA_SITEKEY = getenv('RECAPTCHA_SITEKEY');
 $RECAPTCHA_SECRET = getenv('RECAPTCHA_SECRET');
@@ -107,6 +115,9 @@ if (isset($_POST['register'])) {
         exit;
     }
 }
+
+// Tutup koneksi DB di akhir script
+$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -162,7 +173,7 @@ if (isset($_POST['register'])) {
             <!-- reCAPTCHA -->
             <div class="g-recaptcha" data-sitekey="<?php echo htmlspecialchars($RECAPTCHA_SITEKEY); ?>"></div>
 
-            <button class="btn" type="submit" name="register">Daftar</button>
+            <button classB="btn" type="submit" name="register">Daftar</button>
         </form>
 
         <div class="small">

@@ -6,21 +6,14 @@ $password = getenv('DB_PASS');
 $database = getenv('DB_NAME');
 $port = (int)getenv('DB_PORT');
 
-// Tentukan path ke CA certificate
-// __DIR__ adalah konstanta PHP yang menunjuk ke direktori file saat ini.
-$ca_path = __DIR__ . '/ca.pem'; // Pastikan 'ca.pem' ada di root
-
 $conn = mysqli_init();
 
-// Periksa apakah file CA ada
-if (!file_exists($ca_path)) {
-    die("Connection failed: CA certificate file not found at " . $ca_path);
-}
+// !! PERINGATAN KEAMANAN !!
+// Opsi ini mematikan verifikasi sertifikat SSL.
+// Ini membuat koneksi Anda rentan terhadap serangan Man-in-the-Middle.
+mysqli_options($conn, MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
 
-// Set opsi SSL
-mysqli_ssl_set($conn, NULL, NULL, $ca_path, NULL, NULL);
-
-// Hubungkan menggunakan SSL
+// Hubungkan menggunakan SSL (tanpa verifikasi CA)
 if (!mysqli_real_connect($conn, $servername, $username, $password, $database, $port, NULL, MYSQLI_CLIENT_SSL)) {
     die("Connection failed: " . mysqli_connect_error() . " (SSL Error: " . mysqli_error($conn) . ")");
 }

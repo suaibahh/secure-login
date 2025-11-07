@@ -44,8 +44,7 @@ if (!isset($_SESSION['created'])) {
 
 $username = $_SESSION['username'];
 
-// Tutup koneksi DB jika sudah tidak dipakai lagi di sisa halaman
-$conn->close();
+
 ?>
 
 <!DOCTYPE html>

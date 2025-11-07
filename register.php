@@ -116,8 +116,7 @@ if (isset($_POST['register'])) {
     }
 }
 
-// Tutup koneksi DB di akhir script
-$conn->close();
+
 ?>
 
 <!DOCTYPE html>

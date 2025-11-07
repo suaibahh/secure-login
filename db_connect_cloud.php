@@ -1,18 +1,30 @@
 <?php
-// Cloud-ready database connection with environment variables
-$servername = $_ENV['DB_HOST'] ?? 'localhost';
-$username = $_ENV['DB_USER'] ?? 'root';
-$password = $_ENV['DB_PASS'] ?? '';
-$database = $_ENV['DB_NAME'] ?? 'db_auth';
+// Ambil variabel dari Vercel
+$servername = getenv('DB_HOST');
+$username = getenv('DB_USER');
+$password = getenv('DB_PASS');
+$database = getenv('DB_NAME');
+$port = (int)getenv('DB_PORT');
 
-// Create connection
-$conn = new mysqli($servername, $username, $password, $database);
+// Tentukan path ke CA certificate
+// __DIR__ adalah konstanta PHP yang menunjuk ke direktori file saat ini.
+$ca_path = __DIR__ . '/ca.pem'; // Pastikan 'ca.pem' ada di root
 
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+$conn = mysqli_init();
+
+// Periksa apakah file CA ada
+if (!file_exists($ca_path)) {
+    die("Connection failed: CA certificate file not found at " . $ca_path);
 }
 
-// Set charset to UTF-8
+// Set opsi SSL
+mysqli_ssl_set($conn, NULL, NULL, $ca_path, NULL, NULL);
+
+// Hubungkan menggunakan SSL
+if (!mysqli_real_connect($conn, $servername, $username, $password, $database, $port, NULL, MYSQLI_CLIENT_SSL)) {
+    die("Connection failed: " . mysqli_connect_error() . " (SSL Error: " . mysqli_error($conn) . ")");
+}
+
 $conn->set_charset("utf8mb4");
+
 ?>

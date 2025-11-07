@@ -1,12 +1,8 @@
 {
   "builds": [
     {
-      "src": "*.php",
+      "src": "{*.php,ca.pem}",
       "use": "vercel-php@0.7.4"
-    },
-    {
-      "src": "ca.pem",
-      "use": "@vercel/static"
     }
   ],
   "routes": [
